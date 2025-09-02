@@ -4,14 +4,16 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiResponse } from '@nestjs/swagger'
+import { ValidateResourcesIds } from 'src/common/decorators/validate-resources-ids.decorator'
+import { ValidateResourcesIdsInterceptor } from 'src/common/inteceptors/validate-resources-ids.interceptor'
 import { ProjectListItemDTO, ProjectRequestDTO } from './projects.dto'
 import { ProjectsService } from './projects.service'
 
@@ -19,6 +21,7 @@ import { ProjectsService } from './projects.service'
   version: '1',
   path: 'projects',
 })
+@UseInterceptors(ValidateResourcesIdsInterceptor)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
@@ -30,18 +33,13 @@ export class ProjectsController {
     return this.projectsService.findAll()
   }
 
-  @Get(':id')
+  @Get(':projectId')
   @ApiResponse({
     type: ProjectListItemDTO,
   })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    const project = await this.projectsService.findById(id)
-
-    if (!project) {
-      throw new HttpException('Project not found', HttpStatus.NOT_FOUND)
-    }
-
-    return project
+  @ValidateResourcesIds()
+  async findOne(@Param('projectId', ParseUUIDPipe) id: string) {
+    return this.projectsService.findById(id)
   }
 
   @Post()
@@ -52,29 +50,19 @@ export class ProjectsController {
     return this.projectsService.create(data)
   }
 
-  @Put(':id')
+  @Put(':projectId')
   @ApiResponse({
     type: ProjectListItemDTO,
   })
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() data: ProjectRequestDTO) {
-    const project = await this.projectsService.findById(id)
-
-    if (!project) {
-      throw new HttpException('Project not found', HttpStatus.NOT_FOUND)
-    }
-
+  @ValidateResourcesIds()
+  async update(@Param('projectId', ParseUUIDPipe) id: string, @Body() data: ProjectRequestDTO) {
     return this.projectsService.update(id, data)
   }
 
-  @Delete(':id')
+  @Delete(':projectId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
-    const project = await this.projectsService.findById(id)
-
-    if (!project) {
-      throw new HttpException('Project not found', HttpStatus.NOT_FOUND)
-    }
-
+  @ValidateResourcesIds()
+  async remove(@Param('projectId', ParseUUIDPipe) id: string) {
     return this.projectsService.remove(id)
   }
 }
