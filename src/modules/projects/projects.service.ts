@@ -15,6 +15,25 @@ export class ProjectsService {
       where: {
         id,
       },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        createdAt: true,
+        updateAt: true,
+        tasks: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            dueDate: true,
+            createdAt: true,
+            updateAt: true,
+          },
+        },
+      },
     })
   }
 
