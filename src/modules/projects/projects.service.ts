@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { CollaboratorRole } from '@prisma/client'
 import { PrismaService } from 'src/prisma.service'
 import { ProjectRequestDTO } from './projects.dto'
 
@@ -37,13 +38,24 @@ export class ProjectsService {
     })
   }
 
-  create(data: ProjectRequestDTO) {
-    return this.prisma.project.create({
+  async create(data: ProjectRequestDTO) {
+    const project = await this.prisma.project.create({
       data: {
         ...data,
-        createdById: '123', // TODO - Remover quando tiver autenticação
+        createdById: '8daea066-899e-439f-8168-79c291f4d18a', // TODO - Remover quando tiver autenticação
       },
     })
+
+    // add the user as owner to the created project
+    await this.prisma.projectCollaborator.create({
+      data: {
+        projectId: project.id,
+        userId: '8daea066-899e-439f-8168-79c291f4d18a', // TODO - Remover quando tiver autenticação
+        role: CollaboratorRole.OWNER,
+      },
+    })
+
+    return project
   }
 
   update(id: string, data: ProjectRequestDTO) {
