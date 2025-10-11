@@ -1,20 +1,33 @@
 import { Injectable } from '@nestjs/common'
 import { CollaboratorRole } from '@prisma/client'
+import { RequestContextService } from 'src/common/services/request-context/request-context.service'
 import { PrismaService } from 'src/prisma.service'
 import { ProjectRequestDTO } from './projects.dto'
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly requestContext: RequestContextService,
+  ) {}
 
   findAll() {
-    return this.prisma.project.findMany()
+    const userId = this.requestContext.getUserId()
+
+    return this.prisma.project.findMany({
+      where: {
+        createdById: userId,
+      },
+    })
   }
 
   findById(id: string) {
+    const userId = this.requestContext.getUserId()
+
     return this.prisma.project.findFirst({
       where: {
         id,
+        createdById: userId,
       },
       select: {
         id: true,
@@ -39,10 +52,12 @@ export class ProjectsService {
   }
 
   async create(data: ProjectRequestDTO) {
+    const userId = this.requestContext.getUserId()
+
     const project = await this.prisma.project.create({
       data: {
         ...data,
-        createdById: '8daea066-899e-439f-8168-79c291f4d18a', // TODO - Remover quando tiver autenticação
+        createdById: userId,
       },
     })
 
@@ -50,7 +65,7 @@ export class ProjectsService {
     await this.prisma.projectCollaborator.create({
       data: {
         projectId: project.id,
-        userId: '8daea066-899e-439f-8168-79c291f4d18a', // TODO - Remover quando tiver autenticação
+        userId: userId,
         role: CollaboratorRole.OWNER,
       },
     })
@@ -59,15 +74,20 @@ export class ProjectsService {
   }
 
   update(id: string, data: ProjectRequestDTO) {
+    const userId = this.requestContext.getUserId()
+
     return this.prisma.project.update({
       where: {
         id,
+        createdById: userId,
       },
       data,
     })
   }
 
   async remove(id: string) {
+    const userId = this.requestContext.getUserId()
+
     await this.prisma.task.deleteMany({
       where: {
         projectId: id,
@@ -77,6 +97,7 @@ export class ProjectsService {
     return this.prisma.project.delete({
       where: {
         id,
+        createdById: userId,
       },
     })
   }
