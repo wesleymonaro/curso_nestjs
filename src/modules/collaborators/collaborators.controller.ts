@@ -13,6 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
@@ -34,6 +35,7 @@ import { CollaboratorsService } from './collaborators.service'
 })
 @UseInterceptors(ValidateResourcesIdsInterceptor)
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('jwt')
 export class CollaboratorsController {
   constructor(private readonly collaboratorService: CollaboratorsService) {}
 
