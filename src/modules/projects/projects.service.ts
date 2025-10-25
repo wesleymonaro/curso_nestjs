@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { CollaboratorRole } from '@prisma/client'
+import { CollaboratorRole, Project } from '@prisma/client'
+import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 import { RequestContextService } from 'src/common/services/request-context/request-context.service'
 import { PrismaService } from 'src/prisma.service'
+import { paginate, paginateOutput } from 'src/utils/pagination.utils'
 import { ProjectRequestDTO } from './projects.dto'
 
 @Injectable()
@@ -11,14 +13,30 @@ export class ProjectsService {
     private readonly requestContext: RequestContextService,
   ) {}
 
-  findAll() {
+  async findAll(query?: QueryPaginationDTO) {
     const userId = this.requestContext.getUserId()
 
-    return this.prisma.project.findMany({
+    const projects = await this.prisma.project.findMany({
+      ...paginate(query),
       where: {
         createdById: userId,
       },
     })
+
+    const total = await this.prisma.project.count({
+      where: {
+        OR: [
+          { createdById: userId },
+          {
+            collaborators: {
+              some: { userId },
+            },
+          },
+        ],
+      },
+    })
+
+    return paginateOutput<Project>(projects, total, query)
   }
 
   findById(id: string) {
