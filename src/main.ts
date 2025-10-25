@@ -1,7 +1,9 @@
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
+import { MicroserviceOptions, Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
+import { EMAIL_QUEUE } from './consts'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -20,6 +22,18 @@ async function bootstrap() {
 
   const documentFactory = () => SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, documentFactory)
+
+  // Habilitando Micro-serviços
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RABBITMQ_URL!],
+      queue: EMAIL_QUEUE,
+      queueOptions: { durable: true },
+    },
+  })
+
+  await app.startAllMicroservices()
 
   // Validações
   app.useGlobalPipes(new ValidationPipe())
