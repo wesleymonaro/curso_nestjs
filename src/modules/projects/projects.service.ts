@@ -52,7 +52,7 @@ export class ProjectsService {
         name: true,
         description: true,
         createdAt: true,
-        updateAt: true,
+        updatedAt: true,
         tasks: {
           select: {
             id: true,
@@ -62,7 +62,7 @@ export class ProjectsService {
             priority: true,
             dueDate: true,
             createdAt: true,
-            updateAt: true,
+            updatedAt: true,
           },
         },
       },
