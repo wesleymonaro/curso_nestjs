@@ -18,6 +18,7 @@ import { ValidateResourcesIds } from 'src/common/decorators/validate-resources-i
 import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth/jwt-auth.guard'
 import { ValidateResourcesIdsInterceptor } from 'src/common/inteceptors/validate-resources-ids.interceptor'
+import { ApiPaginatedResponse } from 'src/common/swagger/api-paginated-response'
 import { ProjectFullDTO, ProjectListItemDTO, ProjectRequestDTO } from './projects.dto'
 import { ProjectsService } from './projects.service'
 
@@ -32,9 +33,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get()
-  @ApiResponse({
-    type: [ProjectListItemDTO],
-  })
+  @ApiPaginatedResponse(ProjectListItemDTO)
   findAll(@Query() query?: QueryPaginationDTO) {
     return this.projectsService.findAll(query)
   }
