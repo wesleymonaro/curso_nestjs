@@ -20,7 +20,7 @@ model User {
   avatar String?
   role Role @default(USER)
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   createdProjects Project[] @relation("UserProjects")
   tasksAssigned Task[] @relation("AssignedTasks")
