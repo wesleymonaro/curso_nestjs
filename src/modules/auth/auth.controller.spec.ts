@@ -1,5 +1,6 @@
 import { JwtService } from '@nestjs/jwt'
 import { Test, TestingModule } from '@nestjs/testing'
+import { RequestContextService } from 'src/common/services/request-context/request-context.service'
 import { PrismaService } from 'src/prisma.service'
 import { mockedUsers } from '../users/users.mocks'
 import { UsersService } from '../users/users.service'
@@ -27,6 +28,10 @@ describe('AuthController', () => {
       })
       .overrideProvider(UsersService)
       .useValue(userService)
+      .overrideProvider(RequestContextService)
+      .useValue({
+        getUseId: jest.fn().mockReturnValue('user-1'),
+      })
       .compile()
 
     controller = module.get<AuthController>(AuthController)
