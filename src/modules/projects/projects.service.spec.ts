@@ -1,34 +1,14 @@
-import { faker } from '@faker-js/faker'
 import { Test, TestingModule } from '@nestjs/testing'
 import { Project } from '@prisma/client'
-import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 import { RequestContextService } from 'src/common/services/request-context/request-context.service'
 import { PrismaService } from 'src/prisma.service'
 import { paginateOutput } from 'src/utils/pagination.utils'
+import { mockedProjects, mockPaginationQuery } from './projects.mocks'
 import { ProjectsService } from './projects.service'
 
 describe('ProjectsService', () => {
   let service: ProjectsService
   let prisma: PrismaService
-
-  const mockedProjects = faker.helpers.multiple<Project>(
-    () => {
-      return {
-        id: faker.string.uuid(),
-        name: faker.lorem.sentence(),
-        description: faker.lorem.sentence(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        createdById: 'user-1',
-      }
-    },
-    { count: 10 },
-  )
-
-  const mockPaginationQuery: QueryPaginationDTO = {
-    page: '1',
-    size: '10',
-  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
