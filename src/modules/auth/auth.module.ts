@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
+import { RequestContextService } from 'src/common/services/request-context/request-context.service'
 import { PrismaService } from 'src/prisma.service'
 import { MailModule } from '../mail/mail.module'
 import { MailService } from '../mail/mail.service'
@@ -19,6 +20,13 @@ import { JwtStrategy } from './jwt.strategy'
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, PrismaService, JwtStrategy, MailService],
+  providers: [
+    AuthService,
+    UsersService,
+    PrismaService,
+    JwtStrategy,
+    MailService,
+    RequestContextService,
+  ],
 })
 export class AuthModule {}
