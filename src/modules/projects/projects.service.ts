@@ -19,7 +19,14 @@ export class ProjectsService {
     const projects = await this.prisma.project.findMany({
       ...paginate(query),
       where: {
-        createdById: userId,
+        OR: [
+          { createdById: userId },
+          {
+            collaborators: {
+              some: { userId },
+            },
+          },
+        ],
       },
     })
 
