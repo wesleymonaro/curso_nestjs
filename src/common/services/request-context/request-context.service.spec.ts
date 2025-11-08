@@ -1,18 +1,18 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { RequestContextService } from '../../../modules/request-context/request-context.service'
+import { User } from '@prisma/client'
+import { RequestContextService } from './request-context.service'
 
 describe('RequestContextService', () => {
-  let service: RequestContextService
+  const service: RequestContextService = new RequestContextService()
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [RequestContextService],
-    }).compile()
-
-    service = module.get<RequestContextService>(RequestContextService)
+  it('should set and return the user', () => {
+    const mockUser = { id: 'user-1' } as unknown as User
+    service.setUser(mockUser)
+    expect(service.getUser()).toEqual(mockUser)
   })
 
-  it('should be defined', () => {
-    expect(service).toBeDefined()
+  it('should return the user id', () => {
+    const mockUser = { id: 'user-1' } as unknown as User
+    service.setUser(mockUser)
+    expect(service.getUserId()).toEqual('user-1')
   })
 })

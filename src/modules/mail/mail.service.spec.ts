@@ -1,18 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { MailService } from './mail.service';
+import { Test, TestingModule } from '@nestjs/testing'
+import { MailModule } from './mail.module'
+import { MailService } from './mail.service'
 
 describe('MailService', () => {
-  let service: MailService;
+  let service: MailService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MailService],
-    }).compile();
+      imports: [MailModule],
+    }).compile()
 
-    service = module.get<MailService>(MailService);
-  });
+    service = module.get<MailService>(MailService)
+  })
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-});
+  it('should be able to send the forgot password e-mail', async () => {
+    jest.spyOn(service, 'sendPasswordRequest').mockImplementation()
+    await service.sendPasswordRequest('email', 'token')
+    expect(service.sendPasswordRequest).toHaveBeenCalledTimes(1)
+  })
+})
