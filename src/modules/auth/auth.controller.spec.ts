@@ -140,4 +140,35 @@ describe('AuthController', () => {
       )
     })
   })
+
+  describe('changePassword', () => {
+    it('should be able to change the password', async () => {
+      const user = mockedUsers[0]
+      jest.spyOn(service, 'changePassword').mockResolvedValue(user)
+
+      const response = await controller.changePassword(user, {
+        currentPassword: '123',
+        newPassword: '321',
+      })
+
+      expect(response).toEqual({
+        message: 'Password changed successfully',
+      })
+      expect(service.changePassword).toHaveBeenCalledTimes(1)
+    })
+
+    it('should be able to handle validation errors', async () => {
+      const user = mockedUsers[0]
+      const error = new Error('CurrentPassword is required')
+
+      jest.spyOn(service, 'changePassword').mockRejectedValue(error)
+
+      await expect(
+        controller.changePassword(user, {
+          currentPassword: '',
+          newPassword: '',
+        }),
+      ).rejects.toThrow('CurrentPassword is required')
+    })
+  })
 })

@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt'
 import { PrismaService } from 'src/prisma.service'
 import { MailService } from '../mail/mail.service'
 import { UsersService } from '../users/users.service'
-import { SignInDTO, SignUpDTO } from './auth.dto'
+import { ChangePasswordDTO, SignInDTO, SignUpDTO } from './auth.dto'
 
 @Injectable()
 export class AuthService {
@@ -93,5 +93,28 @@ export class AuthService {
       console.log(error)
       throw new BadRequestException('Invalid or expired token')
     }
+  }
+
+  async changePassword(userId: string, data: ChangePasswordDTO) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    if (!user) {
+      throw new NotFoundException('User not found')
+    }
+
+    const valid = await bcrypt.compare(data.currentPassword, user.password)
+
+    if (!valid) {
+      throw new UnauthorizedException('Current password is not valid')
+    }
+
+    const hash = await bcrypt.hash(data.newPassword, 12)
+
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hash },
+    })
   }
 }

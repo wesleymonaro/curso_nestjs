@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common'
@@ -13,7 +14,13 @@ import { type User } from '@prisma/client'
 import { AuthenticatedUser } from 'src/common/decorators/authenticated-user.decorator'
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth/jwt-auth.guard'
 import { UsersService } from '../users/users.service'
-import { ForgotPasswordDTO, ResetPasswordDTO, SignInDTO, SignUpDTO } from './auth.dto'
+import {
+  ChangePasswordDTO,
+  ForgotPasswordDTO,
+  ResetPasswordDTO,
+  SignInDTO,
+  SignUpDTO,
+} from './auth.dto'
 import { AuthService } from './auth.service'
 
 @Controller({
@@ -67,5 +74,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   resetPassword(@Body() data: ResetPasswordDTO) {
     return this.authService.resetPassword(data.token, data.newPassword)
+  }
+
+  @Put('change-password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('jwt')
+  async changePassword(@AuthenticatedUser() user: User, @Body() data: ChangePasswordDTO) {
+    await this.authService.changePassword(user.id, data)
+    return { message: 'Password changed successfully' }
   }
 }
