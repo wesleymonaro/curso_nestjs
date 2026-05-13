@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { TaskPriority, TaskStatus } from '@prisma/client'
+import { TaskPriority, TaskStatus } from '@prisma-generated/client'
 import { IsNotEmpty, IsString } from 'class-validator'
 
 export class ProjectRequestDTO {

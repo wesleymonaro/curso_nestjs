@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { User } from '@prisma/client'
+import { User } from '@prisma-generated/client'
 import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 
 export const mockPaginationQuery: QueryPaginationDTO = {
