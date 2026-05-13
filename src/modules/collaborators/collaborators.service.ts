@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common'
-import { CollaboratorRole } from '@prisma/client'
+import { CollaboratorRole } from '@prisma-generated/client'
 import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 import { PrismaService } from 'src/prisma.service'
 import { paginate, paginateOutput } from 'src/utils/pagination.utils'

@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { Task, TaskPriority, TaskStatus } from '@prisma/client'
+import { Task, TaskPriority, TaskStatus } from '@prisma-generated/client'
 import { QueryPaginationDTO } from 'src/common/dtos/query-pagination.dto'
 
 export const mockPaginationQuery: QueryPaginationDTO = { page: '1', size: '10' }

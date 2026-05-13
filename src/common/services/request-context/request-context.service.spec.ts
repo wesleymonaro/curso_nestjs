@@ -1,4 +1,4 @@
-import { User } from '@prisma/client'
+import { User } from '@prisma-generated/client'
 import { RequestContextService } from './request-context.service'
 
 describe('RequestContextService', () => {
